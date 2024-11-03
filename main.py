@@ -1,24 +1,22 @@
 # dependencies
 from dotenv import load_dotenv
 import os
-import asyncio  # Import asyncio to run the async function
+import asyncio
 
 # ai
 from src.model.init import trigger_ai_response
-from src.collector.init import data_collector
+from src.collector.init import get_scraped_img
 
 load_dotenv()
 
 async def process_img(url):
-    img_container = await data_collector(url)
+    img_container =  get_scraped_img(url)
     
-    model_response = await trigger_ai_response(img_container.images)  
-    
-    return model_response
+    model_response = await trigger_ai_response(img_container)  
+    print(model_response)
 
 async def __main__():
-    await process_img("https://elperiodiquito.com/deportes/190189/alemania-continua-por-buen-camino-en-la-liga-de-naciones/")
+    await process_img("https://eltiempove.com/un-grand-slam-de-thomas-y-el-juego-de-clase-ponen-a-cleveland-a-pelear-liga-americana/")
 
-# Run the async main function
 if __name__ == "__main__":
     asyncio.run(__main__())

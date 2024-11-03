@@ -1,21 +1,27 @@
-from pyppeteer import launch
+import csv
+import requests
+from bs4 import BeautifulSoup
 
-class ImagesContainer:
-    def __init__(self, images):
-        self.images = images
+def scrape_images(soup, images):
+    selectors = ['img', 'figure > img', 'div > img', 'a > img', 'a > div > img']
+    
+    for selector in selectors:
+        img_elements = soup.select(selector)
+        
+        for img in img_elements:
+            img_src = img.get('src')
+            if img_src and img_src not in [image['src'] for image in images]:
+                images.append({'src': img_src})
+def get_scraped_img(base_url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
+    }
 
-async def data_collector(url):
-    browser = await launch()
-    page = await browser.newPage()
-    await page.goto(url)
+    page = requests.get(base_url, headers=headers)
+    soup = BeautifulSoup(page.text, 'html.parser')
 
-    image_elements = await page.querySelectorAll('img')
     images = []
 
-    for img in image_elements:
-        img_src = await page.evaluate('(img) => img.src', img)
-        images.append(img_src)
+    scrape_images(soup, images)
 
-    await browser.close()
-
-    return ImagesContainer(images=images)
+    return images
