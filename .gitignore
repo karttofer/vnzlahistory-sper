@@ -1,0 +1,12 @@
+# Env
+.env 
+
+# Enviroment Python
+venvapp
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Builds
+docs/_build/
